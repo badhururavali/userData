@@ -47,14 +47,14 @@ app.post("/register", async (request, response) => {
         );`;
     const dbResponse = await db.run(addUserQuery);
     const newUserId = dbResponse.lastID;
-    response.status = 200;
+    response.status(200);
     response.send("User created successfully");
   }
   if (password.length < 5) {
-    response.status = 400;
+    response.status(400);
     response.send("password is too short");
   } else {
-    response.status = 400;
+    response.status(400);
     response.send("User already exits");
   }
 });
