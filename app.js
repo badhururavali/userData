@@ -31,12 +31,12 @@ initializerDbAndServer();
 
 // created new user
 app.post("/register", async (request, response) => {
-  const { username, name, password, gender, location } = request.body;
-  const hashedPassword = await bcrypt.hash(request.body.password, 10);
-  const selectUserQuery = `SELECT * FROM user WHERE username = '${username}';`;
-  const dbUser = await db.get(selectUserQuery);
+  let { username, name, password, gender, location } = request.body;
+  let hashedPassword = await bcrypt.hash(password, 10);
+  let selectUserQuery = `SELECT * FROM user WHERE username = '${username}';`;
+  let dbUser = await db.get(selectUserQuery);
   if (dbUser === undefined) {
-    const addUserQuery = `
+    let addUserQuery = `
     INSERT INTO user (username,name,password,gender,location)
         VALUES (
             '${username}',
@@ -45,14 +45,15 @@ app.post("/register", async (request, response) => {
             '${gender}',
             '${location}'
         );`;
-    const dbResponse = await db.run(addUserQuery);
-    const newUserId = dbResponse.lastID;
-    response.status(200);
-    response.send("User created successfully");
-  }
-  if (password.length < 5) {
-    response.status(400);
-    response.send("password is too short");
+
+    if (password.length < 5) {
+      response.status(400);
+      response.send("password is too short");
+    } else {
+      let newUserDetails = await db.run(addUserQuery);
+      response.status(200);
+      response.send("User created successfully");
+    }
   } else {
     response.status(400);
     response.send("User already exits");
